@@ -21,6 +21,7 @@ export const taskSchema = z.object({
   description: z.string(),
   assignedMember: z.string(),
   priority: z.enum(["Low", "Medium", "High"]),
+  project: z.string(),
 });
 
 export type TTask = z.infer<typeof taskSchema>;
@@ -40,7 +41,8 @@ const AddTaskModal = ({
   setOpen,
   members = [
     { value: "unassigned", label: "Unassigned" },
-    { value: "Noman", label: "Noman" },
+    { value: "Noman", label: "Noman (3/4)" },
+    { value: "Sohan", label: "Sohan (1/3)" },
   ],
 }: AddTaskModalProps) => {
   return (
@@ -59,7 +61,9 @@ const AddTaskModal = ({
             description: "",
             assignedMember: "unassigned",
             priority: "Medium",
+            project: "Marketing",
           }}
+          className="mt-3"
           onSubmit={(data) => onCreate(data)}
         >
           <AInput
@@ -74,12 +78,6 @@ const AddTaskModal = ({
             placeholder="Task description"
           />
           <ASelect
-            name="assignedMember"
-            label="Assigned Member"
-            options={members}
-            required
-          />
-          <ASelect
             name="priority"
             label="Priority"
             options={[
@@ -88,8 +86,23 @@ const AddTaskModal = ({
               { value: "High", label: "High" },
             ]}
             required
-          />          
-
+          />
+          <ASelect
+            name="project"
+            label="Project"
+            options={[
+              { value: "Smart", label: "Smart" },
+              { value: "Mobile", label: "Mobile" },
+              { value: "Marketing", label: "Marketing" },
+            ]}
+            required
+          />
+          <ASelect
+            name="assignedMember"
+            label="Assigned Member"
+            options={members}
+            required
+          />
           <DialogFooter>
             <Button type="submit">Add Task</Button>
           </DialogFooter>

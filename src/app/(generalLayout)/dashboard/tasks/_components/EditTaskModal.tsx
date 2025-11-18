@@ -33,8 +33,8 @@ const EditTaskModal = ({
   setOpen,
   members = [
     { value: "unassigned", label: "Unassigned" },
-    { value: "Noman", label: "Noman" },
-    { value: "Sohan", label: "Sohan" },
+    { value: "Noman", label: "Noman (3/4)" },
+    { value: "Sohan", label: "Sohan (1/3)" },
   ],
 }: EditTaskModalProps) => {
   return (
@@ -61,6 +61,16 @@ const EditTaskModal = ({
             name="description"
             label="Description"
             placeholder="Task description"
+          />
+          <ASelect
+            name="project"
+            label="Project"
+            options={[
+              { value: "Smart", label: "Smart" },
+              { value: "Mobile", label: "Mobile" },
+              { value: "Marketing", label: "Marketing" },
+            ]}
+            required
           />
           <ASelect
             name="assignedMember"

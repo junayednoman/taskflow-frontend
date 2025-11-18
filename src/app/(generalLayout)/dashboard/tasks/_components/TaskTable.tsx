@@ -8,10 +8,11 @@ import EditTaskModal from "./EditTaskModal";
 import { AAlertDialog } from "@/components/modal/AAlertDialog";
 import { toast } from "sonner";
 
-// Dummy tasks
+// Dummy tasks with project field
 const tasksData = [
   {
     id: "1",
+    project: "Website Redesign",
     title: "Design Homepage",
     description: "Create wireframe and mockup for homepage",
     assignedMember: "Riya",
@@ -20,6 +21,7 @@ const tasksData = [
   },
   {
     id: "2",
+    project: "App Development",
     title: "Backend API",
     description: "Set up endpoints for authentication",
     assignedMember: "Imran",
@@ -28,6 +30,7 @@ const tasksData = [
   },
   {
     id: "3",
+    project: "Marketing Campaign",
     title: "Social Media Post",
     description: "Create content for Instagram",
     assignedMember: "Fahim",
@@ -52,7 +55,8 @@ const TasksTable = () => {
   return (
     <div className="space-y-8 mt-3">
       <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
-        <div className="grid grid-cols-6 bg-primary px-6 py-3 text-card font-semibold">
+        <div className="grid grid-cols-7 bg-primary px-6 py-3 text-card font-semibold">
+          <div className="col-span-1">Project</div>
           <div className="col-span-1">Title</div>
           <div className="col-span-2">Description</div>
           <div className="col-span-1">Assigned Member</div>
@@ -64,8 +68,9 @@ const TasksTable = () => {
           {tasksData.map((task: any) => (
             <div
               key={task.id}
-              className="grid grid-cols-6 px-6 py-3 items-center hover:bg-accent transition-colors rounded"
+              className="grid grid-cols-7 px-6 py-3 items-center hover:bg-accent transition-colors rounded"
             >
+              <div className="col-span-1 font-medium">{task.project}</div>
               <div className="col-span-1 font-medium">{task.title}</div>
               <div className="col-span-2">{task.description}</div>
               <div className="col-span-1">{task.assignedMember}</div>
