@@ -55,7 +55,7 @@ export function ASelect<TFieldValues extends FieldValues = FieldValues>({
               value={field.value}
               disabled={disabled}
             >
-              <SelectTrigger className="w-full border-border bg-card text-foreground !h-12">
+              <SelectTrigger className="w-full border-border bg-card text-foreground !h-11">
                 <SelectValue placeholder={placeholder} />
               </SelectTrigger>
               <SelectContent className="bg-card border-border">

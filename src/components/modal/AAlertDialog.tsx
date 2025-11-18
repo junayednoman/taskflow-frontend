@@ -6,6 +6,7 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
+  AlertDialogOverlay,
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
@@ -34,6 +35,7 @@ export function AAlertDialog({
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+      <AlertDialogOverlay className="fixed inset-0 bg-black/30 backdrop-blur-[.8px]" />
       <AlertDialogContent className="w-[320px] text-center">
         <AlertDialogHeader>
           <AlertDialogTitle className="text-center">{title}</AlertDialogTitle>

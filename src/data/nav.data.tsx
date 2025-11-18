@@ -1,4 +1,4 @@
-import { PanelsTopLeft, ScrollText, Users } from "lucide-react";
+import { ListTodo, PanelsTopLeft, ScrollText, Users } from "lucide-react";
 
 type TNavMain = {
   title: string;
@@ -13,9 +13,19 @@ export const navItems: TNavMain = [
     icon: <Users />,
   },
   {
+    title: "Members",
+    url: "/dashboard/members",
+    icon: <Users />,
+  },
+  {
     title: "Projects",
     url: "/dashboard/projects",
     icon: <PanelsTopLeft />,
+  },
+  {
+    title: "Tasks",
+    url: "/dashboard/tasks",
+    icon: <ListTodo />,
   },
   {
     title: "Activity Logs",

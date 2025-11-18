@@ -33,7 +33,7 @@ const activityLogs = [
 
 const RecentActivities = () => {
   return (
-    <Card className="w-full mx-auto">
+    <Card className="w-full mx-auto border-border/60 shadow-none">
       <CardHeader>
         <div className="flex justify-between">
           <CardTitle className="text-xl font-bold">
