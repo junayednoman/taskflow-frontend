@@ -13,7 +13,7 @@ const SignUp = () => {
 
   return (
     <main className="flex justify-center items-center h-[90vh]">
-      <div className="w-[500px] bg-card rounded-2xl p-8">
+      <div className="w-[550px]! bg-card rounded-2xl p-8">
         <div className="text-center mb-10">
           <h1 className="text-3xl font-bold mb-2">Join TaskFlow Today</h1>
           <p className="text-card-foreground text-sm">
@@ -35,7 +35,7 @@ const SignUp = () => {
           <AInput name="email" label="Email Address" type="email" required />
           <AInput name="password" label="Password" type="password" required />
 
-          <Button type="submit" className="h-12 w-full mt-4">
+          <Button type="submit" className="h-11 w-full mt-4">
             Sign Up
           </Button>
 

@@ -17,7 +17,7 @@ const Login = () => {
 
   return (
     <main className="flex justify-center items-center h-[80vh]">
-      <div className="w-[500px] bg-card rounded-2xl">
+      <div className="w-[490px] bg-card rounded-2xl">
         <div className="my-8 text-center mb-10">
           <h1 className="text-3xl font-bold mb-2">Welcome to TaskFlow</h1>
           <p className="text-card-foreground text-sm">
@@ -31,8 +31,9 @@ const Login = () => {
             email: "junayednoman05@gmail.com",
             password: "newpass",
           }}
-          onSubmit={onSubmit}>
-          <AInput name="email" label="Email address" type="email" required />
+          onSubmit={onSubmit}
+        >
+          <AInput name="email" label="Email" type="email" required />
           <AInput name="password" label="Password" type="password" required />
 
           <div className="flex items-center justify-between">
@@ -42,14 +43,15 @@ const Login = () => {
                 <Button
                   type="button"
                   variant="link"
-                  className="text-primary p-0 h-auto font-normal">
+                  className="text-primary p-0 h-auto font-normal"
+                >
                   Forgot Password
                 </Button>
               </Link>
             </div>
           </div>
 
-          <Button type="submit" className="h-12 w-full">
+          <Button type="submit" className="h-11 w-full">
             Login
           </Button>
           <p className="text-sm text-center mt-4">

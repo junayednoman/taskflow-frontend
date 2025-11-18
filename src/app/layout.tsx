@@ -11,10 +11,10 @@ const openSans = Open_Sans({
 
 export const metadata: Metadata = {
   title: {
-    default: "Drive Society Dashboard",
-    template: "%s | Drive Society",
+    default: "TaskFlow - Manage tasks with ease",
+    template: "%s | TaskFlow - Manage tasks with ease",
   },
-  description: "Drive Society Dashboard",
+  description: "TaskFlow - Manage tasks with ease",
 };
 
 export default function RootLayout({

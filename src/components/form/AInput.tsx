@@ -53,7 +53,7 @@ export const AInput = <TFieldValues extends FieldValues = FieldValues>({
                 id={label}
                 type={inputType}
                 placeholder={placeholder}
-                className={`border-border text-foreground h-12 rounded-lg pr-10 bg-card ${
+                className={`border-border text-foreground h-11 rounded-lg pr-10 bg-card ${
                   className || ""
                 }`}
                 disabled={disabled}
