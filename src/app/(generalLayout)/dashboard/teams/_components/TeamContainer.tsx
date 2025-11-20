@@ -35,7 +35,7 @@ const TeamContainer = () => {
   return (
     <AContainer>
       <div className="space-y-3">
-        <h3 className="text-3xl font-bold">Manage Your Teams</h3>
+        <h3 className="text-3xl font-bold">Manage Teams</h3>
         <p className="text-base text-card-foreground">
           View team members, track their workloads, and easily balance tasks
           across your projects.
