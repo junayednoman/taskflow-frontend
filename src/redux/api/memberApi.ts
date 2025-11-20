@@ -19,7 +19,26 @@ const memberApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Members"],
     }),
+    checkCapacity: build.mutation({
+      query: (memberId: string) => ({
+        url: `/members/${memberId}/capacity`,
+        method: "POST",
+      }),
+    }),
+    getLeastLoadedMembers: build.mutation({
+      query: ({ projectId }) => {
+        return {
+          url: `/members/${projectId}/least-loaded`,
+          method: "POST",
+        };
+      },
+    }),
   }),
 });
 
-export const { useCreateMemberMutation, useGetMembersQuery } = memberApi;
+export const {
+  useCreateMemberMutation,
+  useGetMembersQuery,
+  useCheckCapacityMutation,
+  useGetLeastLoadedMembersMutation,
+} = memberApi;

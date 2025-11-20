@@ -50,11 +50,11 @@ const ProjectsTable = () => {
   };
 
   if (isLoading)
-    return <ASpinner className="flex justify-center items-center h-[70vh]" />;
+    return <ASpinner className="flex justify-center items-center h-[60vh]" />;
 
   if (error)
     return (
-      <AErrorMessage error={error} className="h-[70vh]" onRetry={refetch} />
+      <AErrorMessage error={error} className="h-[60vh]" onRetry={refetch} />
     );
 
   return (

@@ -1,4 +1,4 @@
-import { TTask } from "@/app/(generalLayout)/dashboard/tasks/_components/AddTaskModal";
+import { TTask } from "@/app/(generalLayout)/dashboard/tasks/task.validation";
 import { baseApi } from "./baseApi";
 
 const taskApi = baseApi.injectEndpoints({
@@ -9,7 +9,7 @@ const taskApi = baseApi.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: ["Task"],
+      invalidatesTags: ["Task", "Projects", "Members"],
     }),
     getTasks: build.query({
       query: (params) => ({

@@ -1,7 +1,4 @@
-// Same as AddTaskModal but pre-filled with task data and onEdit callback
-
 import { ReactNode } from "react";
-import { taskSchema, TTask } from "./AddTaskModal";
 import {
   Dialog,
   DialogContent,
@@ -15,6 +12,7 @@ import AForm from "@/components/form/AForm";
 import { AInput } from "@/components/form/AInput";
 import { ASelect } from "@/components/form/ASelect";
 import { Button } from "@/components/ui/button";
+import { taskSchema, TTask } from "../task.validation";
 
 interface EditTaskModalProps {
   onEdit: (task: TTask) => void;

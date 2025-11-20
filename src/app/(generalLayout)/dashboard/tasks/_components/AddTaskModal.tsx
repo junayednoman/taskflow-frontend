@@ -13,38 +13,91 @@ import {
 import AForm from "@/components/form/AForm";
 import { AInput } from "@/components/form/AInput";
 import { ASelect } from "@/components/form/ASelect";
-import * as z from "zod";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
+import { useAddTaskMutation } from "@/redux/api/taskApi";
+import handleMutation from "@/utils/handleMutation";
+import { taskSchema, TTask } from "../task.validation";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import {
+  useCheckCapacityMutation,
+  useGetLeastLoadedMembersMutation,
+} from "@/redux/api/memberApi";
+import { CapacityAlert } from "./CapacityAlert";
 
-export const taskSchema = z.object({
-  title: z.string().min(1, "Task title is required"),
-  description: z.string(),
-  assignedMember: z.string(),
-  priority: z.enum(["Low", "Medium", "High"]),
-  project: z.string(),
-});
-
-export type TTask = z.infer<typeof taskSchema>;
+interface TOption {
+  value: string;
+  label: string;
+}
 
 interface AddTaskModalProps {
-  onCreate: (task: TTask) => void;
   children: ReactNode;
-  open?: boolean;
-  setOpen: (open: boolean) => void;
-  members?: { value: string; label: string }[];
+  members: TOption[];
+  projects: TOption[];
+  selectedProject: string;
+  setSelectedProject: (projectId: string) => void;
 }
 
 const AddTaskModal = ({
-  onCreate,
   children,
-  open,
-  setOpen,
-  members = [
-    { value: "unassigned", label: "Unassigned" },
-    { value: "Noman", label: "Noman (3/4)" },
-    { value: "Sohan", label: "Sohan (1/3)" },
-  ],
+  members,
+  projects,
+  selectedProject,
+  setSelectedProject,
 }: AddTaskModalProps) => {
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [addTask, { isLoading }] = useAddTaskMutation();
+  const [memberId, setMemberId] = useState<string>("");
+  const [checkCapacity] = useCheckCapacityMutation();
+
+  const handleChangeMember = (memberId: string) => {
+    setMemberId(memberId);
+
+    handleMutation(
+      memberId,
+      checkCapacity,
+      "Checking member capacity...",
+      () => {},
+      () => {
+        setAlertOpen(true);
+      }
+    );
+  };
+
+  const [getLeastLoadedMembers] = useGetLeastLoadedMembersMutation();
+
+  const handleAutoAssign = async () => {
+    await handleMutation(
+      { projectId: selectedProject },
+      getLeastLoadedMembers,
+      "Finding least loaded member...",
+      (res: any) => {
+        setMemberId(res?.data?.member?.id);
+      }
+    );
+  };
+
+  const handleChangeProject = (projectId: string) => {
+    if (setSelectedProject) {
+      setSelectedProject(projectId);
+    }
+  };
+
+  const handleCreateTeam = async (data: any) => {
+    data.projectId = selectedProject;
+    data.assignedMemberId = memberId;
+    await handleMutation(data, addTask, "Task is being added...", () => {
+      setOpen(false);
+      setSelectedProject("");
+    });
+  };
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -59,12 +112,11 @@ const AddTaskModal = ({
           defaultValues={{
             title: "",
             description: "",
-            assignedMember: "unassigned",
-            priority: "Medium",
-            project: "Marketing",
+            priority: "HIGH",
+            // project: projects[0].value || "",
           }}
           className="mt-3"
-          onSubmit={(data) => onCreate(data)}
+          onSubmit={handleCreateTeam}
         >
           <AInput
             name="title"
@@ -80,33 +132,68 @@ const AddTaskModal = ({
           <ASelect
             name="priority"
             label="Priority"
+            placeholder="Select a priority"
             options={[
-              { value: "Low", label: "Low" },
-              { value: "Medium", label: "Medium" },
-              { value: "High", label: "High" },
+              { value: "LOW", label: "Low" },
+              { value: "MEDIUM", label: "Medium" },
+              { value: "HIGH", label: "High" },
             ]}
             required
           />
-          <ASelect
-            name="project"
-            label="Project"
-            options={[
-              { value: "Smart", label: "Smart" },
-              { value: "Mobile", label: "Mobile" },
-              { value: "Marketing", label: "Marketing" },
-            ]}
-            required
-          />
-          <ASelect
-            name="assignedMember"
-            label="Assigned Member"
-            options={members}
-            required
-          />
+          {/* <ASelect name="project" label="Project" options={projects} required /> */}
+          <Label htmlFor="project" className="mb-2 mt-4">
+            Project
+          </Label>
+          <Select value={selectedProject} onValueChange={handleChangeProject}>
+            <SelectTrigger
+              id="project"
+              className="w-full border-border bg-card text-foreground !h-11"
+            >
+              <SelectValue placeholder="Select a project" />
+            </SelectTrigger>
+            <SelectContent>
+              {projects.map((p: TOption) => (
+                <SelectItem key={p.value} value={p.value}>
+                  {p.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Label htmlFor="member" className="mb-2 mt-4">
+            Member
+          </Label>
+          <Select
+            value={memberId}
+            disabled={!selectedProject}
+            onValueChange={handleChangeMember}
+          >
+            <SelectTrigger
+              id="member"
+              className="w-full border-border bg-card text-foreground !h-11"
+            >
+              <SelectValue placeholder="Select a project" />
+            </SelectTrigger>
+            <SelectContent>
+              {members.map((m: TOption) => (
+                <SelectItem key={m.value} value={m.value}>
+                  {m.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
           <DialogFooter>
-            <Button type="submit">Add Task</Button>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? "Adding..." : "Add Task"}
+            </Button>
           </DialogFooter>
         </AForm>
+        <CapacityAlert
+          handleAutoAssign={handleAutoAssign}
+          open={alertOpen}
+          setOpen={setAlertOpen}
+        />
       </DialogContent>
     </Dialog>
   );

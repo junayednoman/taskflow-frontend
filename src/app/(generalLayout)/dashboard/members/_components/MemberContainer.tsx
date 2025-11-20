@@ -4,35 +4,36 @@ import MemberTable from "./MemberTable";
 import { useGetMembersQuery } from "@/redux/api/memberApi";
 import { useGetTeamApisQuery } from "@/redux/api/teamApi";
 import { TTeam } from "../../teams/team.interface";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ASpinner from "@/components/ui/ASpinner";
 import AErrorMessage from "@/components/AErrorMessage";
+import { useSearchParams } from "next/navigation";
 
 const MemberContainer = () => {
+  const searchParams = useSearchParams();
+  const teamId = searchParams.get("team");
   const [page, setPage] = useState(1);
   const limit = 10;
-  const [selectedTeam, setSelectedTeam] = useState("");
+  const [selectedTeam, setSelectedTeam] = useState(teamId || "");
   const { data: teamData, isLoading, error, refetch } = useGetTeamApisQuery("");
   const teams = teamData?.data?.map((team: TTeam) => ({
     id: team.id,
     name: team.name,
   }));
 
-  useEffect(() => {
-    setSelectedTeam(teamData?.data[0].id);
-  }, [teamData, isLoading]);
-
   const params = {
     page,
     limit,
-    team: selectedTeam,
   };
+  if (selectedTeam) {
+    Object.assign(params, { team: selectedTeam });
+  }
   const {
     data,
     isLoading: isMembersLoading,
     error: membersError,
     refetch: refetchMembers,
-  } = useGetMembersQuery(params, { skip: !selectedTeam });
+  } = useGetMembersQuery(params);
   const members = data?.data.members;
 
   if (isLoading || isMembersLoading) {
@@ -46,6 +47,7 @@ const MemberContainer = () => {
       />
     );
   }
+
   return (
     <AContainer>
       <div className="space-y-3">
