@@ -5,10 +5,20 @@ import { AInput } from "@/components/form/AInput";
 import { Button } from "@/components/ui/button";
 import { signupSchema, TSignUp } from "@/validations/auth.validation";
 import Link from "next/link";
+import handleMutation from "@/utils/handleMutation";
+import { useRouter } from "next/navigation";
+import { useSignUpMutation } from "@/redux/api/authApi";
 
 const SignUp = () => {
-  const onSubmit = (data: TSignUp) => {
-    console.log(data);
+  const [signup, { isLoading }] = useSignUpMutation();
+  const router = useRouter();
+
+  const onSuccess = () => {
+    router.push("/auth/login");
+  };
+
+  const onSubmit = async (data: TSignUp) => {
+    await handleMutation(data, signup, "Creating account...", onSuccess);
   };
 
   return (
@@ -30,13 +40,18 @@ const SignUp = () => {
             password: "",
           }}
           className="space-y-3!"
-          onSubmit={onSubmit}>
+          onSubmit={onSubmit}
+        >
           <AInput name="name" label="Full Name" type="text" required />
           <AInput name="email" label="Email Address" type="email" required />
           <AInput name="password" label="Password" type="password" required />
 
-          <Button type="submit" className="h-11 w-full mt-4">
-            Sign Up
+          <Button
+            disabled={isLoading}
+            type="submit"
+            className="h-11 w-full mt-4"
+          >
+            {isLoading ? "Creating..." : "Sign Up"}
           </Button>
 
           <p className="text-sm text-center mt-4">

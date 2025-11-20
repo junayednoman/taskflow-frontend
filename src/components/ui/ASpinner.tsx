@@ -3,7 +3,7 @@ import loading from "@/assets/loading.svg";
 
 const ASpinner = ({
   className,
-  size = 100,
+  size = 140,
 }: {
   className?: string;
   size?: number;

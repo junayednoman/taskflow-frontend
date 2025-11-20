@@ -10,8 +10,7 @@ const handleMutation = async (
   const toastId = toast.loading(loadingTxt);
 
   try {
-    const res = await mutationFunc(data).unwrap(); // Await the mutation
-
+    const res = await mutationFunc(data).unwrap();
     if (res?.success) {
       toast.success(res?.message || "Operation successful", {
         id: toastId,
@@ -30,9 +29,10 @@ const handleMutation = async (
       }
     }
   } catch (error: any) {
+    console.log("api error: ", error);
     let errorMessage = "Something went wrong!";
     if (error.status === "PARSING_ERROR") {
-      errorMessage = "Server returned invalid data. Please try again or contact support.";
+      errorMessage = "Server returned invalid data. Please try again!";
     } else if (error.data?.message) {
       errorMessage = error.data.message;
     }
@@ -41,7 +41,6 @@ const handleMutation = async (
       id: toastId,
       duration: 4500,
     });
-    console.log("api error: ", error);
     if (typeof onFailure === "function") {
       onFailure(error);
     }

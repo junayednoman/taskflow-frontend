@@ -17,8 +17,8 @@ export default function NotFound() {
         </h1>
 
         <p className="text-muted-foreground max-w-md text-sm">
-          The page you&apos;re trying to reach just took a vacation. Maybe check the
-          link or head back home?
+          The page you&apos;re trying to reach just took a vacation. Maybe check
+          the link or head back home?
         </p>
 
         <Link href="/dashboard">

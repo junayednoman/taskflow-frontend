@@ -27,6 +27,8 @@ interface EditTeamModalProps {
   children: ReactNode;
   open?: boolean;
   setOpen: (open: boolean) => void;
+  data: TEditTeam;
+  isLoading?: boolean;
 }
 
 const EditTeamModal = ({
@@ -34,6 +36,8 @@ const EditTeamModal = ({
   children,
   open,
   setOpen,
+  data,
+  isLoading,
 }: EditTeamModalProps) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -46,7 +50,7 @@ const EditTeamModal = ({
 
         <AForm<TEditTeam>
           schema={editTeamSchema}
-          defaultValues={{ name: "" }}
+          defaultValues={{ name: data.name }}
           onSubmit={(data) => onEdit(data.name)}
         >
           <AInput
@@ -56,7 +60,9 @@ const EditTeamModal = ({
             required
           />
           <DialogFooter>
-            <Button type="submit">Save</Button>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? "Saving..." : "Save"}
+            </Button>
           </DialogFooter>
         </AForm>
       </DialogContent>

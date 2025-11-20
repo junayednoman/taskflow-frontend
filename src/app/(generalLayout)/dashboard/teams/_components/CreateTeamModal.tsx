@@ -27,6 +27,7 @@ interface CreateTeamModalProps {
   children: ReactNode;
   open?: boolean;
   setOpen: (open: boolean) => void;
+  isCreating?: boolean;
 }
 
 const CreateTeamModal = ({
@@ -34,6 +35,7 @@ const CreateTeamModal = ({
   children,
   open,
   setOpen,
+  isCreating,
 }: CreateTeamModalProps) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -56,7 +58,9 @@ const CreateTeamModal = ({
             required
           />
           <DialogFooter>
-            <Button type="submit">Create Team</Button>
+            <Button type="submit" disabled={isCreating}>
+              {isCreating ? "Creating..." : "Create Team"}
+            </Button>
           </DialogFooter>
         </AForm>
       </DialogContent>

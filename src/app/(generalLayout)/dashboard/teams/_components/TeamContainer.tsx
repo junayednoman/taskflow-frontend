@@ -3,16 +3,34 @@ import AContainer from "@/components/AContainer";
 import TeamsTable from "./TeamTable";
 import { Button } from "@/components/ui/button";
 import CreateTeamModal from "./CreateTeamModal";
-import { toast } from "sonner";
 import { useState } from "react";
+import {
+  useCreateTeamMutation,
+  useGetTeamApisQuery,
+} from "@/redux/api/teamApi";
+import ASpinner from "@/components/ui/ASpinner";
+import AErrorMessage from "@/components/AErrorMessage";
+import handleMutation from "@/utils/handleMutation";
 
 const TeamContainer = () => {
   const [open, setOpen] = useState(false);
+  const { data, isLoading, error, refetch } = useGetTeamApisQuery("");
+  const teams = data?.data || [];
 
-  const handleCreateTeam = (name: string) => {
-    toast.success("Team created successfully");
-    console.log("data, ", name);
-    setOpen(false);
+  const [createTeam, { isLoading: isCreating }] = useCreateTeamMutation();
+
+  if (isLoading) {
+    return <ASpinner className="flex justify-center items-center h-[70vh]" />;
+  } else if (error) {
+    return (
+      <AErrorMessage className="h-[70vh]" error={error} onRetry={refetch} />
+    );
+  }
+
+  const handleCreateTeam = async (name: string) => {
+    await handleMutation({ name }, createTeam, "Team is being created...", () =>
+      setOpen(false)
+    );
   };
   return (
     <AContainer>
@@ -29,10 +47,12 @@ const TeamContainer = () => {
           setOpen={setOpen}
           onCreate={handleCreateTeam}
         >
-          <Button className="p-6">Create Team</Button>
+          <Button className="p-6" disabled={isCreating}>
+            {isCreating ? "Creating..." : "Create Team"}
+          </Button>
         </CreateTeamModal>
       </div>
-      <TeamsTable />
+      <TeamsTable teams={teams} />
     </AContainer>
   );
 };
