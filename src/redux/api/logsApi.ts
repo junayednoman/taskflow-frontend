@@ -10,7 +10,14 @@ const logsApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Logs"],
     }),
+    deleteLog: build.mutation({
+      query: (id) => ({
+        url: `/logs/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Logs"],
+    }),
   }),
 });
 
-export const { useGetLogsQuery } = logsApi;
+export const { useGetLogsQuery, useDeleteLogMutation } = logsApi;

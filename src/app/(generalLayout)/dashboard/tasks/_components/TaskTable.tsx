@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
 import EditTaskModal from "./EditTaskModal";
 import { AAlertDialog } from "@/components/modal/AAlertDialog";
-import { toast } from "sonner";
 import {
   Select,
   SelectContent,
@@ -14,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useGetTasksQuery } from "@/redux/api/taskApi";
+import { useDeleteTaskMutation, useGetTasksQuery } from "@/redux/api/taskApi";
 import ASpinner from "@/components/ui/ASpinner";
 import AErrorMessage from "@/components/AErrorMessage";
 import { useGetProjectsQuery } from "@/redux/api/projectApi";
@@ -23,21 +22,17 @@ import { TProject } from "../../projects/project.interface";
 import { useGetMembersQuery } from "@/redux/api/memberApi";
 import { TMember } from "../../members/member.interface";
 import AddTaskModal from "./AddTaskModal";
+import handleMutation from "@/utils/handleMutation";
 
 const TasksTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const limit = 10;
   const [selectedProject, setSelectedProject] = useState<string>("");
   const [selectedMember, setSelectedMember] = useState<string>("");
-  const [editTaskId, setEditTaskId] = useState<string | null>(null);
+  const [deleteTask] = useDeleteTaskMutation();
 
-  const handleEditTask = (task: any) => {
-    console.log("Edited Task:", task);
-    setEditTaskId(null);
-  };
-
-  const handleDeleteTask = () => {
-    toast.success("Task deleted successfully");
+  const handleDeleteTask = async (id: string) => {
+    await handleMutation(id, deleteTask, "Deleting task...");
   };
 
   // fetch project data
@@ -84,7 +79,8 @@ const TasksTable = () => {
   const { data, error, isLoading, refetch } = useGetTasksQuery(params);
   const tasks = data?.data?.tasks || [];
 
-  const meta = data?.meta || {};
+  const meta = data?.data?.meta || {};
+
   if (isLoading || isProjectLoading || isMembersLoading)
     return <ASpinner className="flex justify-center items-center h-[60vh]" />;
 
@@ -98,6 +94,7 @@ const TasksTable = () => {
         }
       />
     );
+
   return (
     <div>
       <div className="flex justify-end gap-3">
@@ -162,7 +159,11 @@ const TasksTable = () => {
                     {task.project.name}
                   </div>
                   <div className="col-span-1 font-medium">{task.title}</div>
-                  <div className="col-span-2">{task.description}</div>
+                  <div className="col-span-2">
+                    {task.description.length > 80
+                      ? `${task.description.slice(0, 80)}...`
+                      : task.description}
+                  </div>
                   <div className="col-span-1">{task.assignedMember.name}</div>
                   <div
                     className={`col-span-1 ${
@@ -177,18 +178,17 @@ const TasksTable = () => {
                   </div>
                   <div className="col-span-1 flex justify-end gap-2">
                     <EditTaskModal
-                      open={editTaskId === task.id}
-                      setOpen={(isOpen: boolean) =>
-                        setEditTaskId(isOpen ? task.id : null)
-                      }
-                      onEdit={handleEditTask}
-                      task={task as any}
+                      selectedProject={selectedProject}
+                      setSelectedProject={setSelectedProject}
+                      task={task}
+                      members={memberOptions}
+                      projects={projectOptions}
                     >
                       <Button className="bg-foreground/10 hover:bg-foreground/20">
                         <Pencil className="text-foreground" size={20} />
                       </Button>
                     </EditTaskModal>
-                    <AAlertDialog onAction={handleDeleteTask}>
+                    <AAlertDialog onAction={() => handleDeleteTask(task.id)}>
                       <Button className="bg-destructive/10 hover:bg-destructive/20">
                         <Trash2 className="text-destructive" size={20} />
                       </Button>

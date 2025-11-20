@@ -5,39 +5,37 @@ import { APagination } from "@/components/ui/APagination";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import { AAlertDialog } from "@/components/modal/AAlertDialog";
-import { toast } from "sonner";
-
-// Dummy logs
-const logsData = [
-  {
-    id: "1",
-    date: "2025-11-18",
-    user: "Rafi",
-    action: "Created Project",
-    details: "New project 'Website Revamp' created",
-  },
-  {
-    id: "2",
-    date: "2025-11-18",
-    user: "Imran",
-    action: "Updated Task",
-    details: "Changed task status to In Progress",
-  },
-  {
-    id: "3",
-    date: "2025-11-17",
-    user: "Fahim",
-    action: "Deleted Member",
-    details: "Removed user from team",
-  },
-];
+import { useGetLogsQuery, useDeleteLogMutation } from "@/redux/api/logsApi";
+import ASpinner from "@/components/ui/ASpinner";
+import AErrorMessage from "@/components/AErrorMessage";
+import handleMutation from "@/utils/handleMutation";
+import { format } from "date-fns";
 
 const LogsTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const limit = 10;
+  const [deleteLog] = useDeleteLogMutation();
+  const { data, error, isLoading, refetch } = useGetLogsQuery({
+    page: currentPage,
+    limit,
+  });
 
-  const handleDeleteLog = () => {
-    toast.success("Log entry deleted");
+  const logsData = data?.data?.logs || [];
+  const meta = data?.data?.meta || { total: 0, page: 1, limit: 10 };
+
+  const handleDeleteLog = async (id: string) => {
+    handleMutation(id, deleteLog, "Deleting log...", () => {});
   };
+
+  if (isLoading) {
+    return <ASpinner className="flex justify-center items-center h-[60vh]" />;
+  }
+
+  if (error) {
+    return (
+      <AErrorMessage error={error} className="h-[60vh]" onRetry={refetch} />
+    );
+  }
 
   return (
     <div className="space-y-8 mt-6">
@@ -46,9 +44,9 @@ const LogsTable = () => {
         {/* Header */}
         <div className="grid grid-cols-5 bg-primary px-6 py-3 text-card font-semibold">
           <div>Date</div>
-          <div>User</div>
-          <div>Action</div>
-          <div className="col-span-1">Details</div>
+          <div>From</div>
+          <div>To</div>
+          <div className="col-span-1">Task</div>
           <div className="text-right">Action</div>
         </div>
 
@@ -59,13 +57,14 @@ const LogsTable = () => {
               key={log.id}
               className="grid grid-cols-5 px-6 py-3 items-center hover:bg-accent transition-colors rounded"
             >
-              <div className="font-medium">{log.date}</div>
-              <div className="font-medium">{log.user}</div>
-              <div>{log.action}</div>
-              <div className="col-span-1">{log.details}</div>
-
+              <div className="font-medium">
+                {format(new Date(log.dateTime), "PPpp")}
+              </div>
+              <div className="font-medium">{log.fromMember?.name}</div>
+              <div>{log.toMember?.name}</div>
+              <div className="col-span-1">{log.task?.title}</div>
               <div className="flex justify-end">
-                <AAlertDialog onAction={handleDeleteLog}>
+                <AAlertDialog onAction={() => handleDeleteLog(log.id)}>
                   <Button className="bg-destructive/10 hover:bg-destructive/20">
                     <Trash2 className="text-destructive" size={20} />
                   </Button>
@@ -77,14 +76,15 @@ const LogsTable = () => {
       </div>
 
       {/* Pagination */}
-      <APagination
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        totalItems={200} // your real log count
-        initialPage={1}
-        maxVisiblePages={5}
-        itemsPerPage={10}
-      />
+      {meta.total > meta.limit && (
+        <APagination
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          totalItems={meta.total}
+          maxVisiblePages={5}
+          itemsPerPage={limit}
+        />
+      )}
     </div>
   );
 };
