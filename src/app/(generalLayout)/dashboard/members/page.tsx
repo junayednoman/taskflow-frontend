@@ -1,8 +1,9 @@
-import MemberContainer from "./_components/MemberContainer";
+"use client";
+import dynamic from "next/dynamic";
 
-export const metadata = {
-  title: "Members",
-};
+const MemberContainer = dynamic(() => import("./_components/MemberContainer"), {
+  ssr: false,
+});
 
 export default function Home() {
   return (
