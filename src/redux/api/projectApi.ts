@@ -19,7 +19,19 @@ const projectApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Projects"],
     }),
+    updateProject: build.mutation({
+      query: ({ id, ...body }) => ({
+        url: `/projects/${id}`,
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: ["Projects"],
+    }),
   }),
 });
 
-export const { useCreateProjectMutation, useGetProjectsQuery } = projectApi;
+export const {
+  useCreateProjectMutation,
+  useGetProjectsQuery,
+  useUpdateProjectMutation,
+} = projectApi;
