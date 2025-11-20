@@ -197,8 +197,8 @@ const TasksTable = () => {
                 </div>
               ))
             ) : (
-              <div className="col-span-7 text-center py-12 text-muted-foreground">
-                No tasks found.
+              <div className="col-span-7 text-center py-44 text-muted-foreground">
+                No tasks found!
               </div>
             )}
           </div>

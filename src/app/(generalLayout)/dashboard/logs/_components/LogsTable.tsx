@@ -52,26 +52,32 @@ const LogsTable = () => {
 
         {/* Rows */}
         <div className="divide-y divide-border">
-          {logsData.map((log: any) => (
-            <div
-              key={log.id}
-              className="grid grid-cols-5 px-6 py-3 items-center hover:bg-accent transition-colors rounded"
-            >
-              <div className="font-medium">
-                {format(new Date(log.dateTime), "PPpp")}
+          {logsData.length > 0 ? (
+            logsData.map((log: any) => (
+              <div
+                key={log.id}
+                className="grid grid-cols-5 px-6 py-3 items-center hover:bg-accent transition-colors rounded"
+              >
+                <div className="font-medium">
+                  {format(new Date(log.dateTime), "PPpp")}
+                </div>
+                <div className="font-medium">{log.fromMember?.name}</div>
+                <div>{log.toMember?.name}</div>
+                <div className="col-span-1">{log.task?.title}</div>
+                <div className="flex justify-end">
+                  <AAlertDialog onAction={() => handleDeleteLog(log.id)}>
+                    <Button className="bg-destructive/10 hover:bg-destructive/20">
+                      <Trash2 className="text-destructive" size={20} />
+                    </Button>
+                  </AAlertDialog>
+                </div>
               </div>
-              <div className="font-medium">{log.fromMember?.name}</div>
-              <div>{log.toMember?.name}</div>
-              <div className="col-span-1">{log.task?.title}</div>
-              <div className="flex justify-end">
-                <AAlertDialog onAction={() => handleDeleteLog(log.id)}>
-                  <Button className="bg-destructive/10 hover:bg-destructive/20">
-                    <Trash2 className="text-destructive" size={20} />
-                  </Button>
-                </AAlertDialog>
-              </div>
+            ))
+          ) : (
+            <div className="px-4 py-44 col-span-12 text-center text-muted-foreground">
+              No logs found!
             </div>
-          ))}
+          )}
         </div>
       </div>
 

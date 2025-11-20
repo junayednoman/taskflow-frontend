@@ -120,8 +120,8 @@ const MemberTable = ({
                 );
               })
             ) : (
-              <div className="px-4 py-10 col-span-12 text-center text-muted-foreground">
-                No members found
+              <div className="px-4 py-44 col-span-12 text-center text-muted-foreground">
+                No members found!
               </div>
             )}
           </div>

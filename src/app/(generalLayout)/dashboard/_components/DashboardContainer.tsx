@@ -15,11 +15,11 @@ const DashboardContainer = () => {
   const [selectedTeam, setSelectedTeam] = useState("");
   const { data: teamData, isLoading, error, refetch } = useGetTeamApisQuery("");
   const teams = teamData?.data?.map((team: TTeam) => ({
-    id: team.id,
-    name: team.name,
+    id: team?.id,
+    name: team?.name,
   }));
   useEffect(() => {
-    setSelectedTeam(teamData?.data[0].id);
+    setSelectedTeam(teamData?.data[0]?.id);
   }, [teamData, isLoading]);
 
   const {
