@@ -27,7 +27,10 @@ const DashboardContainer = () => {
     isLoading: isLoadingMembers,
     error: errorMembers,
     refetch: refetchMembers,
-  } = useGetMembersQuery(selectedTeam, { skip: !selectedTeam });
+  } = useGetMembersQuery(
+    { team: selectedTeam, limit: 5 },
+    { skip: !selectedTeam }
+  );
   const memberData = data?.data;
 
   // fetch logs  data
@@ -36,7 +39,7 @@ const DashboardContainer = () => {
     isLoading: isLoadingLogs,
     error: errorLogs,
     refetch: refetchLogs,
-  } = useGetLogsQuery("");
+  } = useGetLogsQuery({ limit: 5 });
 
   if (isLoading || isLoadingMembers || isLoadingLogs)
     return <ASpinner className="flex justify-center items-center h-[70vh]" />;

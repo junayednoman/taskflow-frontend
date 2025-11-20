@@ -3,16 +3,22 @@ import AContainer from "@/components/AContainer";
 import ProjectsTable from "./ProjectsTable";
 import CreateProjectModal, { TCreateProject } from "./CreateProjectModal";
 import { useState } from "react";
-import { toast } from "sonner";
+import { useCreateProjectMutation } from "@/redux/api/projectApi";
+import handleMutation from "@/utils/handleMutation";
 import { Button } from "@/components/ui/button";
 
 const ProjectContainer = () => {
   const [open, setOpen] = useState(false);
 
-  const handleCreateTeam = (data: TCreateProject) => {
-    toast.success("Project created successfully");
-    setOpen(false);
-    console.log("data, ", data);
+  const [createProject, { isLoading }] = useCreateProjectMutation();
+
+  const handleCreateProject = async (data: TCreateProject) => {
+    await handleMutation(
+      data,
+      createProject,
+      "Creating project...",
+      () => setOpen(false)
+    );
   };
 
   return (
@@ -20,19 +26,22 @@ const ProjectContainer = () => {
       <div className="space-y-3">
         <h3 className="text-3xl font-bold">Projects Dashboard</h3>
         <p className="text-base text-card-foreground">
-          See all your projects in one place — track progress, team load, and
-          what needs your attention.
+          See all your projects in one place — track progress and workload.
         </p>
       </div>
+
       <div className="flex justify-end">
         <CreateProjectModal
           open={open}
           setOpen={setOpen}
-          onCreate={handleCreateTeam}
+          onCreate={handleCreateProject}
         >
-          <Button className="p-6">Create Project</Button>
+          <Button disabled={isLoading} className="p-6">
+            {isLoading ? "Creating..." : "Create Project"}
+          </Button>
         </CreateProjectModal>
       </div>
+
       <ProjectsTable />
     </AContainer>
   );

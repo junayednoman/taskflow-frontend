@@ -12,23 +12,15 @@ import {
 } from "@/components/ui/dialog";
 import AForm from "@/components/form/AForm";
 import { AInput } from "@/components/form/AInput";
-import * as z from "zod";
 import { ReactNode } from "react";
-
-// Validation schema for member
-const createMemberSchema = z.object({
-  name: z.string().min(1, "Member name is required"),
-  role: z.string().min(1, "Role is required"),
-  capacity: z.string().min(1, "Capacity is required"),
-});
-
-export type TCreateMember = z.infer<typeof createMemberSchema>;
+import { createMemberSchema, TCreateMember } from "../member.validation";
 
 interface CreateMemberModalProps {
   onCreate: (data: TCreateMember) => void;
   children: ReactNode;
   open?: boolean;
   setOpen: (open: boolean) => void;
+  isLoading?: boolean;
 }
 
 const CreateMemberModal = ({
@@ -36,6 +28,7 @@ const CreateMemberModal = ({
   children,
   open,
   setOpen,
+  isLoading,
 }: CreateMemberModalProps) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -73,7 +66,9 @@ const CreateMemberModal = ({
           />
 
           <DialogFooter>
-            <Button type="submit">Create Member</Button>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? "Creating..." : "Create Member"}
+            </Button>
           </DialogFooter>
         </AForm>
       </DialogContent>

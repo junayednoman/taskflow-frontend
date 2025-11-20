@@ -9,183 +9,56 @@ import {
 } from "@/components/ui/select";
 import { useState } from "react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import CreateTeamModal, { TCreateMember } from "./CreateMemberModal";
+import CreateTeamModal from "./CreateMemberModal";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 import { APagination } from "@/components/ui/APagination";
+import { TTeam } from "../../teams/team.interface";
+import { TMember } from "../member.interface";
+import { useCreateMemberMutation } from "@/redux/api/memberApi";
+import handleMutation from "@/utils/handleMutation";
+import { TCreateMember } from "../member.validation";
+import { TMeta } from "../../dashboard.interface";
 
-// Dummy teams and members
-const teams = [
-  { id: "team1", name: "Design" },
-  { id: "team2", name: "Development" },
-  { id: "team3", name: "Marketing" },
-];
+type TProps = {
+  teams: TTeam[];
+  meta: TMeta;
+  selectedTeam: string;
+  setSelectedTeam: (teamId: string) => void;
+  members: TMember[];
+  page: number;
+  setPage: (page: number) => void;
+  limit: number;
+};
 
-const membersData = {
-  team1: [
-    { id: "1", name: "Riya", role: "Designer", currentTasks: 2, capacity: 3 },
-    { id: "2", name: "Sara", role: "UX", currentTasks: 2, capacity: 4 },
-    {
-      id: "3",
-      name: "Maya",
-      role: "Illustrator",
-      currentTasks: 5,
-      capacity: 3,
-    },
-    {
-      id: "4",
-      name: "Aria",
-      role: "UI Designer",
-      currentTasks: 3,
-      capacity: 3,
-    },
-    { id: "5", name: "Noor", role: "Animator", currentTasks: 2, capacity: 2 },
-    {
-      id: "6",
-      name: "Lina",
-      role: "Graphic Designer",
-      currentTasks: 5,
-      capacity: 4,
-    },
-    {
-      id: "19",
-      name: "Hiba",
-      role: "Brand Designer",
-      currentTasks: 3,
-      capacity: 4,
-    },
-    {
-      id: "20",
-      name: "Ava",
-      role: "Motion Designer",
-      currentTasks: 4,
-      capacity: 5,
-    },
-    {
-      id: "21",
-      name: "Meera",
-      role: "Creative Lead",
-      currentTasks: 5,
-      capacity: 5,
-    },
-    {
-      id: "22",
-      name: "Selena",
-      role: "Visual Artist",
-      currentTasks: 1,
-      capacity: 3,
-    },
-  ],
-
-  team2: [
-    { id: "7", name: "Farhan", role: "Frontend", currentTasks: 2, capacity: 5 },
-    { id: "8", name: "Nabil", role: "Backend", currentTasks: 1, capacity: 4 },
-    { id: "9", name: "Imran", role: "Fullstack", currentTasks: 5, capacity: 5 },
-    { id: "10", name: "Rahat", role: "DevOps", currentTasks: 3, capacity: 3 },
-    { id: "11", name: "Sami", role: "Mobile", currentTasks: 4, capacity: 4 },
-    { id: "12", name: "Tanvir", role: "QA", currentTasks: 2, capacity: 3 },
-    {
-      id: "23",
-      name: "Kamal",
-      role: "System Architect",
-      currentTasks: 3,
-      capacity: 4,
-    },
-    {
-      id: "24",
-      name: "Junaid",
-      role: "React Developer",
-      currentTasks: 5,
-      capacity: 5,
-    },
-    {
-      id: "25",
-      name: "Bashir",
-      role: "Node.js Developer",
-      currentTasks: 2,
-      capacity: 3,
-    },
-    { id: "26", name: "Fardeen", role: "Tester", currentTasks: 1, capacity: 2 },
-  ],
-
-  team3: [
-    { id: "13", name: "Tania", role: "SEO", currentTasks: 3, capacity: 3 },
-    { id: "14", name: "Arif", role: "Content", currentTasks: 2, capacity: 5 },
-    {
-      id: "15",
-      name: "Fahim",
-      role: "Social Media",
-      currentTasks: 4,
-      capacity: 3,
-    },
-    {
-      id: "16",
-      name: "Rashed",
-      role: "Marketing Analyst",
-      currentTasks: 1,
-      capacity: 3,
-    },
-    {
-      id: "17",
-      name: "Nusrat",
-      role: "PR Specialist",
-      currentTasks: 2,
-      capacity: 2,
-    },
-    {
-      id: "18",
-      name: "Shirin",
-      role: "Copywriter",
-      currentTasks: 3,
-      capacity: 3,
-    },
-    {
-      id: "27",
-      name: "Omar",
-      role: "Email Marketer",
-      currentTasks: 4,
-      capacity: 4,
-    },
-    {
-      id: "28",
-      name: "Sadia",
-      role: "Content Strategist",
-      currentTasks: 5,
-      capacity: 5,
-    },
-    {
-      id: "29",
-      name: "Mahin",
-      role: "Ad Specialist",
-      currentTasks: 3,
-      capacity: 4,
-    },
-    {
-      id: "30",
-      name: "Rupom",
-      role: "Growth Marketer",
-      currentTasks: 2,
-      capacity: 3,
-    },
-  ],
-} as any;
-
-const MemberTable = () => {
-  const [page, setPage] = useState(1);
-  const [selectedTeam, setSelectedTeam] = useState("team1");
-  const members = membersData[selectedTeam] || [];
-
+const MemberTable = ({
+  teams,
+  selectedTeam,
+  setSelectedTeam,
+  members,
+  page,
+  setPage,
+  limit,
+  meta,
+}: TProps) => {
   const [openCreateModal, setOpenCreateModal] = useState(false);
 
-  const handleCreateMember = (data: TCreateMember) => {
-    toast.success("Member created successfully");
-    console.log("data, ", data);
-    setOpenCreateModal(false);
+  const [addMember, { isLoading }] = useCreateMemberMutation();
+
+  const handleCreateMember = async (data: TCreateMember) => {
+    const payload = {
+      ...data,
+      teamId: selectedTeam,
+      capacity: Number(data.capacity),
+    };
+
+    await handleMutation(payload, addMember, "Member is being added...", () => {
+      setOpenCreateModal(false);
+    });
   };
 
   return (
     <Card className="w-full mx-auto shadow-none! border-border/60 mt-6">
-      <CardHeader className="flex justify-between items-center">
+      <CardHeader className="flex gap-6 justify-end items-center">
         <Select value={selectedTeam} onValueChange={setSelectedTeam}>
           <SelectTrigger className="w-48 h-12! border-border">
             <SelectValue placeholder="Select Team" />
@@ -200,11 +73,14 @@ const MemberTable = () => {
         </Select>
 
         <CreateTeamModal
+          isLoading={isLoading}
           open={openCreateModal}
           setOpen={setOpenCreateModal}
           onCreate={handleCreateMember}
         >
-          <Button className="p-6">Create Member</Button>
+          <Button disabled={isLoading} className="p-6">
+            {isLoading ? "Creating..." : "Create Member"}
+          </Button>
         </CreateTeamModal>
       </CardHeader>
       <CardContent>
@@ -218,8 +94,8 @@ const MemberTable = () => {
           </div>
           <div className="divide-y divide-border">
             {members.length > 0 ? (
-              members.map((member: any) => {
-                const overload = member.currentTasks > member.capacity;
+              members.map((member: TMember) => {
+                const overload = member._count.tasks > member.capacity;
                 return (
                   <div
                     key={member.id}
@@ -230,7 +106,7 @@ const MemberTable = () => {
                     <div className="col-span-4">{member.name}</div>
                     <div className="col-span-3">{member.role}</div>
                     <div className="col-span-2 font-medium">
-                      {member.currentTasks}
+                      {member._count.tasks}
                     </div>
                     <div className="col-span-2">{member.capacity}</div>
                     <div
@@ -252,14 +128,16 @@ const MemberTable = () => {
         </div>
       </CardContent>
       {/* pagination */}
-      <div className="mt-2">
-        <APagination
-          currentPage={page}
-          setCurrentPage={setPage}
-          totalItems={100}
-          itemsPerPage={10}
-        />
-      </div>
+      {meta?.total > limit && (
+        <div className="mt-2">
+          <APagination
+            currentPage={page}
+            setCurrentPage={setPage}
+            totalItems={meta?.total}
+            itemsPerPage={limit}
+          />
+        </div>
+      )}
     </Card>
   );
 };
