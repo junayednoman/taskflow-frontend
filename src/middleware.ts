@@ -32,7 +32,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Redirect / to /dashboard if logged in
-  if (ROOT_PATH.test(pathname) && isAuthenticated) {
+  if (ROOT_PATH.test(pathname)) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 

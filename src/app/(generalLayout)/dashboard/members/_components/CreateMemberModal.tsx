@@ -14,6 +14,7 @@ import AForm from "@/components/form/AForm";
 import { AInput } from "@/components/form/AInput";
 import { ReactNode } from "react";
 import { createMemberSchema, TCreateMember } from "../member.validation";
+import { ASelect } from "@/components/form/ASelect";
 
 interface CreateMemberModalProps {
   onCreate: (data: TCreateMember) => void;
@@ -21,6 +22,7 @@ interface CreateMemberModalProps {
   open?: boolean;
   setOpen: (open: boolean) => void;
   isLoading?: boolean;
+  teams: { label: string; value: string }[];
 }
 
 const CreateMemberModal = ({
@@ -29,6 +31,7 @@ const CreateMemberModal = ({
   open,
   setOpen,
   isLoading,
+  teams,
 }: CreateMemberModalProps) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -65,6 +68,13 @@ const CreateMemberModal = ({
             required
           />
 
+          <ASelect
+            name="team"
+            label="Team"
+            placeholder="Select a team"
+            options={teams}
+            required
+          />
           <DialogFooter>
             <Button type="submit" disabled={isLoading}>
               {isLoading ? "Creating..." : "Create Member"}

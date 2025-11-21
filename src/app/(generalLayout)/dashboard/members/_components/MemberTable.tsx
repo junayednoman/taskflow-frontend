@@ -12,7 +12,6 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import CreateTeamModal from "./CreateMemberModal";
 import { Button } from "@/components/ui/button";
 import { APagination } from "@/components/ui/APagination";
-import { TTeam } from "../../teams/team.interface";
 import { TMember } from "../member.interface";
 import { useCreateMemberMutation } from "@/redux/api/memberApi";
 import handleMutation from "@/utils/handleMutation";
@@ -20,7 +19,7 @@ import { TCreateMember } from "../member.validation";
 import { TMeta } from "../../dashboard.interface";
 
 type TProps = {
-  teams: TTeam[];
+  teams: { value: string; label: string }[];
   meta: TMeta;
   selectedTeam: string;
   setSelectedTeam: (teamId: string) => void;
@@ -65,14 +64,15 @@ const MemberTable = ({
           </SelectTrigger>
           <SelectContent>
             {teams.map((team) => (
-              <SelectItem key={team.id} value={team.id}>
-                {team.name}
+              <SelectItem key={team.value} value={team.value}>
+                {team.label}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
 
         <CreateTeamModal
+          teams={teams}
           isLoading={isLoading}
           open={openCreateModal}
           setOpen={setOpenCreateModal}

@@ -17,8 +17,8 @@ const MemberContainer = () => {
   const [selectedTeam, setSelectedTeam] = useState(teamId || "");
   const { data: teamData, isLoading, error, refetch } = useGetTeamApisQuery("");
   const teams = teamData?.data?.map((team: TTeam) => ({
-    id: team.id,
-    name: team.name,
+    value: team.id,
+    label: team.name,
   }));
 
   const params = {
