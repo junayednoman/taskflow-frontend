@@ -8,7 +8,7 @@ import ASpinner from "@/components/ui/ASpinner";
 import AErrorMessage from "@/components/AErrorMessage";
 import { useGetMembersQuery } from "@/redux/api/memberApi";
 import { TTeam } from "../teams/team.interface";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useGetLogsQuery } from "@/redux/api/logsApi";
 
 const DashboardContainer = () => {
@@ -18,19 +18,13 @@ const DashboardContainer = () => {
     id: team?.id,
     name: team?.name,
   }));
-  useEffect(() => {
-    setSelectedTeam(teamData?.data[0]?.id);
-  }, [teamData, isLoading]);
-
+  const params = {  limit: 5 };
   const {
     data,
     isLoading: isLoadingMembers,
     error: errorMembers,
     refetch: refetchMembers,
-  } = useGetMembersQuery(
-    { team: selectedTeam, limit: 5 },
-    { skip: !selectedTeam }
-  );
+  } = useGetMembersQuery(params);
   const memberData = data?.data;
 
   // fetch logs  data
