@@ -18,7 +18,8 @@ const DashboardContainer = () => {
     id: team?.id,
     name: team?.name,
   }));
-  const params = {  limit: 5 };
+  const params = { limit: 5 };
+  if (selectedTeam) Object.assign(params, { team: selectedTeam });
   const {
     data,
     isLoading: isLoadingMembers,
