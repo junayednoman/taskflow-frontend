@@ -40,13 +40,11 @@ const MemberTable = ({
   meta,
 }: TProps) => {
   const [openCreateModal, setOpenCreateModal] = useState(false);
-
   const [addMember, { isLoading }] = useCreateMemberMutation();
 
   const handleCreateMember = async (data: TCreateMember) => {
     const payload = {
       ...data,
-      teamId: selectedTeam,
       capacity: Number(data.capacity),
     };
 

@@ -69,7 +69,7 @@ const CreateMemberModal = ({
           />
 
           <ASelect
-            name="team"
+            name="teamId"
             label="Team"
             placeholder="Select a team"
             options={teams}
